@@ -4,6 +4,8 @@ import userEvent from '@testing-library/user-event';
 import { LoginPage } from './login-page';
 
 const getSubmitBtn = () => screen.getByRole(/button/i, {name: /submit/i});
+const getEmailLabel = () => screen.getByLabelText(/email/i);
+const getPasswordLabel = () => screen.getByLabelText(/password/i);
 
 test('it should render the login title', () => {
     render(<LoginPage />);
@@ -13,20 +15,28 @@ test('it should render the login title', () => {
 
 test('it should render the form elements', () => {
     render(<LoginPage />);
-    const email = screen.getByLabelText(/email/i);
-    const password = screen.getByLabelText(/password/i);
 
-    expect(email).toBeInTheDocument();
-    expect(password).toBeInTheDocument();
+    expect(getEmailLabel()).toBeInTheDocument();
+    expect(getPasswordLabel()).toBeInTheDocument();
     expect(getSubmitBtn()).toBeInTheDocument();
-})
+});
 
 test('it should validate the inputs as required', async() => {
-    render(<LoginPage />)
+    render(<LoginPage />);
     userEvent.click(getSubmitBtn());
     
     const emailRequired = await screen.findByText(/The email is required/i);
     const passwordRequired = await screen.findByText(/The password is required/i);
     expect(emailRequired).toBeInTheDocument();
     expect(passwordRequired).toBeInTheDocument();
-})
+});
+
+test('it should validate the email format', async () => {
+    render(<LoginPage />);
+
+    userEvent.type(getEmailLabel(), 'invalid email');
+    userEvent.click(getSubmitBtn());
+
+    const emailInvalid = await screen.findByText(/The email is not valid/i);
+    expect(emailInvalid).toBeInTheDocument();
+});
