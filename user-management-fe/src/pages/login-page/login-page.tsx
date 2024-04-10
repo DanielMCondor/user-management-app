@@ -1,37 +1,29 @@
-import React, { useState } from 'react';
-import axios from 'axios';
 import { Typography, TextField, Button } from '@mui/material';
 import { useForm, SubmitHandler } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 
+import { StyledLoadder } from 'components/loader';
+import { useLoginMutation } from './user-login-mutation';
 import { loginSchema } from './login-schema';
-
-interface IInputs {
-    email: string;
-    password: string;
-}
-
-const loginService = async (email: string, password: string) => {
-    await axios.post('/login', {
-        email,
-        password
-    });
-}
+import { IInputs } from './login-page.interfaces';
 
 export function LoginPage() {
-    const [isLoading, setIsLoading] = useState(false);
+    const mutation = useLoginMutation();
     const { register, handleSubmit, formState: { errors } } = useForm<IInputs>({
         resolver: yupResolver(loginSchema)
     });
 
     const onSubmit: SubmitHandler<IInputs> = async ({ email, password }) => {
-        setIsLoading(true);
-        await loginService(email, password);
+        mutation.mutate({email, password});
     };
     
     return (
         <>
             <Typography component="h1">Login</Typography>
+            
+            {mutation.isLoading && (
+                <StyledLoadder role="progressbar" aria-label="loading"><h3>loading</h3></StyledLoadder>
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <TextField 
@@ -47,7 +39,7 @@ export function LoginPage() {
                     helperText={errors.password?.message}
                 />
 
-                <Button disabled={isLoading} type="submit">submit</Button>
+                <Button disabled={mutation.isLoading} type="submit">submit</Button>
             </form>
 
         </>

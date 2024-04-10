@@ -1,20 +1,22 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { renderWithProviders } from 'mocks/render-with-providers';
 import { LoginPage } from './login-page';
+
 
 const getSubmitBtn = () => screen.getByRole('button', {name: /submit/i})
 const getEmailLabel = () => screen.getByLabelText(/email/i);
 const getPasswordLabel = () => screen.getByLabelText(/password/i);
 
 test('it should render the login title', () => {
-    render(<LoginPage />);
+    renderWithProviders(<LoginPage />)
     const result = screen.getByRole('heading', {name: /login/i});
     expect(result).toBeInTheDocument();
 });
 
 test('it should render the form elements', () => {
-    render(<LoginPage />);
+    renderWithProviders(<LoginPage />)
 
     expect(getEmailLabel()).toBeInTheDocument();
     expect(getPasswordLabel()).toBeInTheDocument();
@@ -22,7 +24,7 @@ test('it should render the form elements', () => {
 });
 
 test('it should validate the inputs as required', async() => {
-    render(<LoginPage />);
+    renderWithProviders(<LoginPage />)
     await userEvent.click(getSubmitBtn());
     
     const emailRequired = await screen.findByText(/The email is required/i);
@@ -32,7 +34,7 @@ test('it should validate the inputs as required', async() => {
 });
 
 test('it should validate the email format', async () => {
-    render(<LoginPage />);
+    renderWithProviders(<LoginPage />)
 
     await userEvent.type(getEmailLabel(), 'invalid email');
     await userEvent.click(getSubmitBtn());
@@ -42,7 +44,7 @@ test('it should validate the email format', async () => {
 });
 
 test('it should disable the submit button while is fetching', async () => {
-    render(<LoginPage />);
+    renderWithProviders(<LoginPage />)
 
     expect(getSubmitBtn()).not.toBeDisabled();
 
@@ -51,4 +53,18 @@ test('it should disable the submit button while is fetching', async () => {
     await userEvent.click(getSubmitBtn());
     
     await waitFor(() => expect(getSubmitBtn()).toBeDisabled());
+});
+
+test('it should show a loading indicator while is fetching the login', async () => {
+    renderWithProviders(<LoginPage />);
+
+    const notloading = screen.queryByRole('progressbar', {name: /loading/i});
+    expect(notloading).not.toBeInTheDocument();
+
+    await userEvent.type(getEmailLabel(), 'daniel.soft@gmail.com');
+    await userEvent.type(getPasswordLabel(), '123');
+    await userEvent.click(getSubmitBtn());
+
+    const loading = await screen.findByRole('progressbar', {name: /loading/i});
+    expect(loading).toBeInTheDocument();
 });
