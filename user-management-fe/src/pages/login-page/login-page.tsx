@@ -5,7 +5,6 @@ import {
     TextField,
     Button,
     Container,
-    CssBaseline,
     Box,
     Avatar,
 } from '@mui/material';
@@ -43,7 +42,6 @@ export function LoginPage() {
     
     return (
         <Container component="main" maxWidth="xs">
-            <CssBaseline />
             <Box
                 sx={{
                     marginTop: 8,
@@ -72,6 +70,7 @@ export function LoginPage() {
                         label="Email"
                         {...register("email", {required: true})}
                         helperText={errors.email?.message}
+                        error={!!errors.email}
                     />
 
                     <TextField
@@ -81,6 +80,7 @@ export function LoginPage() {
                         type="password"
                         {...register("password", {required: true})}
                         helperText={errors.password?.message}
+                        error={!!errors.password}
                     />
 
                     <Button

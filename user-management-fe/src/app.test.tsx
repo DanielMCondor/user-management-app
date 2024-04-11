@@ -1,10 +1,9 @@
-import { screen } from '@testing-library/react';
-import { renderWithProviders } from 'mocks/render-with-providers';
+import { screen, render } from '@testing-library/react';
 
 import App from './app';
 
 test('it should render the login page', () => {
-    renderWithProviders(<App />);
+    render(<App />);
 
     const login = screen.getByRole('heading', {name: /login/i});
     expect(login).toBeInTheDocument();
