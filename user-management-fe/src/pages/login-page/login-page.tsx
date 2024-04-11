@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Typography, TextField, Button } from '@mui/material';
+import { 
+    Typography,
+    TextField,
+    Button,
+    Container,
+    CssBaseline,
+    Box,
+    Avatar,
+} from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useForm, SubmitHandler } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 
@@ -33,32 +42,58 @@ export function LoginPage() {
     };
     
     return (
-        <>
-            <Typography component="h1">Login</Typography>
-            
-            {mutation.isLoading && (
-                <StyledLoadder role="progressbar" aria-label="loading"><h3>loading</h3></StyledLoadder>
-            )}
+        <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <Box
+                sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                }}
+            >
+                <Avatar sx={{m:1, bgcolor: 'secondary.main'}}>
+                    <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                    Login
+                </Typography>
 
-            {mutation.isError ? <Typography>{errorMessage}</Typography> : null}
+                {mutation.isLoading && (
+                    <StyledLoadder role="progressbar" aria-label="loading"><h3>loading</h3></StyledLoadder>
+                )}
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <TextField 
-                    {...register("email", {required: true})}
-                    label="Email"
-                    helperText={errors.email?.message}
-                />
+                {mutation.isError ? <Typography>{errorMessage}</Typography> : null}
 
-                <TextField
-                    {...register("password", {required: true})}
-                    label="Password"
-                    type="password"
-                    helperText={errors.password?.message}
-                />
+                <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{mt: 1}}>
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        label="Email"
+                        {...register("email", {required: true})}
+                        helperText={errors.email?.message}
+                    />
 
-                <Button disabled={mutation.isLoading} type="submit">submit</Button>
-            </form>
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        label="Password"
+                        type="password"
+                        {...register("password", {required: true})}
+                        helperText={errors.password?.message}
+                    />
 
-        </>
+                    <Button
+                        disabled={mutation.isLoading}
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{mt: 3, mb: 2}}
+                    >
+                        submit
+                    </Button>
+                </Box>
+            </Box>
+        </Container>
     );
 }
